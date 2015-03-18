@@ -46,7 +46,7 @@ public:
 bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
 {
 	char object;
-	float tmp[4];
+	float input[4];
 	Triangle triangle;
 	ifstream fin("hw1_input.txt");
 	if (!fin)
@@ -58,17 +58,17 @@ bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Tr
 		{
 		case 'E':
 			for (int i = 0; i < 3; i++)
-				fin >> tmp[i];
-			camera.position.set(tmp[0], tmp[1], tmp[2]);
+				fin >> input[i];
+			camera.position.set(input[0], input[1], input[2]);
 			break;
 		case 'V':
 			for (int i = 0; i < 3; i++)
-				fin >> tmp[i];
-			camera.direction.set(tmp[0], tmp[1], tmp[2]);
+				fin >> input[i];
+			camera.direction.set(input[0], input[1], input[2]);
 			break;
 		case 'F':
-			fin >> tmp[0];
-			camera.FOV = tmp[0];
+			fin >> input[0];
+			camera.FOV = input[0];
 			break;
 		case 'R':
 			fin >> viewport.width;
@@ -82,15 +82,15 @@ bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Tr
 			break;
 		case 'S':
 			for (int i = 0; i < 4; i++)
-				fin >> tmp[i];
-			spheres.push_back(Sphere(tmp[0], tmp[1], tmp[2], tmp[3]));
+				fin >> input[i];
+			spheres.push_back(Sphere(input[0], input[1], input[2], input[3]));
 			break;
 		case 'T':
 			for (int i = 0; i < 3; i++)
 			{
 				for (int j = 0; j < 3; j++)
-					fin >> tmp[j];
-				triangle.vertices[i].set(tmp[0], tmp[1], tmp[2]);
+					fin >> input[j];
+				triangle.vertices[i].set(input[0], input[1], input[2]);
 			}
 			triangles.push_back(triangle);
 			break;
@@ -110,21 +110,21 @@ void rayTracing(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vec
 	vec3 planeCenter = camera.position + camera.direction * t;
 	//viewport plane nx * x + ny * y + nz * z = d
 	float d = camera.direction[0] * planeCenter[0] + camera.direction[1] * planeCenter[1] + camera.direction[2] * planeCenter[2];
-	vec3 tmp1 = camera.direction, tmp2 = camera.direction;
-	//it might go wrong if the camera is placed at different place
-	tmp1 = rotation3D(vec3(0.0, 1.0, 0.0) ^ camera.direction, 23.5) * tmp1; //down
-	tmp2 = rotation3D(vec3(0.0, 1.0, 0.0), 23.5) * tmp2; //left
-	vec3 downCenterPoint;
+	vec3 vDownCenter = camera.direction, vLeftCenter = camera.direction;
+	//find the vectors of camera to down center edge and left center edge
+	vDownCenter = rotation3D(vec3(0.0, 1.0, 0.0) ^ camera.direction, camera.FOV / 2) * vDownCenter;
+	vLeftCenter = rotation3D(vec3(0.0, 1.0, 0.0), camera.FOV / 2) * vLeftCenter;
+	vec3 downCenter;
 	t = (d - (camera.direction[0] * camera.position[0] + camera.direction[1] * camera.position[1] + camera.direction[2] * camera.position[2]))
-		/ (camera.direction[0] * tmp1[0] + camera.direction[1] * tmp1[1] + camera.direction[2] * tmp1[2]);
-	downCenterPoint = camera.position + tmp1 * t;
-	vec3 leftCenterPoint;
+		/ (camera.direction[0] * vDownCenter[0] + camera.direction[1] * vDownCenter[1] + camera.direction[2] * vDownCenter[2]);
+	downCenter = camera.position + vDownCenter * t;
+	vec3 leftCenter;
 	t = (d - (camera.direction[0] * camera.position[0] + camera.direction[1] * camera.position[1] + camera.direction[2] * camera.position[2]))
-		/ (camera.direction[0] * tmp2[0] + camera.direction[1] * tmp2[1] + camera.direction[2] * tmp2[2]);
-	leftCenterPoint = camera.position + tmp2 * t;
-	viewport.startPosition = planeCenter - downCenterPoint + leftCenterPoint;
-	viewport.vectorWidth = (planeCenter - leftCenterPoint) / (viewport.width * 0.5);
-	viewport.vectorHeight = (downCenterPoint - planeCenter) / (viewport.height * 0.5);
+		/ (camera.direction[0] * vLeftCenter[0] + camera.direction[1] * vLeftCenter[1] + camera.direction[2] * vLeftCenter[2]);
+	leftCenter = camera.position + vLeftCenter * t;
+	viewport.startPosition = planeCenter - downCenter + leftCenter;
+	viewport.vectorWidth = (planeCenter - leftCenter) / (viewport.width * 0.5);
+	viewport.vectorHeight = (downCenter - planeCenter) / (viewport.height * 0.5);
 	vec3 ray;
 	vec3 v1, v2, normal;
 	vec3 intersection;
