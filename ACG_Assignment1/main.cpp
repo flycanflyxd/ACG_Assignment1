@@ -45,7 +45,7 @@ public:
 
 bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
 {
-	char object;
+	char type;
 	float input[4];
 	Triangle triangle;
 	ifstream fin("hw1_input.txt");
@@ -53,8 +53,8 @@ bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Tr
 		return false;
 	while (!fin.eof())
 	{
-		fin >> object;
-		switch (object)
+		fin >> type;
+		switch (type)
 		{
 		case 'E':
 			for (int i = 0; i < 3; i++)
@@ -102,7 +102,7 @@ bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Tr
 	return true;
 }
 
-void rayTracing(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
+void rayTracing(const Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
 {
 	//calculate the center position of the viewport
 	float t;

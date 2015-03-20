@@ -34,8 +34,5 @@
     <ClInclude Include="algebra3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="glui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="algebra3.h" />
-    <ClInclude Include="glui_internal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
