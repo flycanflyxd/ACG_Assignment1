@@ -102,7 +102,7 @@ bool init(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Tr
 	return true;
 }
 
-void rayTracing(const Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
+void rayTracing(Camera &camera, Viewport &viewport, vector<Sphere> &spheres, vector<Triangle> &triangles)
 {
 	//calculate the center position of the viewport
 	float t;
